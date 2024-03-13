@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ML Model Prediction" />
+    <title>ML Model Prediction</title>
+  </head>
+  <body>
+    <h1>SSA Prediction</h1>
+    <form>
+      <label for="NG">NG:</label>
+      <input type="text" id="NG" name="NG" /><br /><br />
+      <label for="FGT">FGT:</label>
+      <input type="text" id="FGT" name="FGT" /><br /><br />
+      <label for="HZT">HZT:</label>
+      <input type="text" id="HZT" name="HZT" /><br /><br />
+      <label for="Stack">Stack:</label>
+      <input type="text" id="Stack" name="Stack" /><br /><br />
+      <label for="Feed_Rate">Feed Rate:</label>
+      <input type="text" id="Feed_Rate" name="Feed Rate" /><br /><br />
+      <label for="CO">CO:</label>
+      <input type="text" id="CO" name="CO" /><br /><br />
+      <label for="Cooler">Cooler:</label>
+      <input type="text" id="Cooler" name="Cooler" /><br /><br />
+      <label for="RPM">RPM:</label>
+      <input type="text" id="RPM" name="RPM" /><br /><br />
+      <label for="BA">BA:</label>
+      <input type="text" id="BA" name="BA" /><br /><br />
+      <label for="Molochite">Molochite</label>
+      <input type="text" id="Molochite" name="Molochite" /><br /><br>
+      
+
+      <input type="submit" value="Predict" />
+    </form>
+    <div id="result">
+      <h2>Result:</h2>
+      <p id="result-value"></p>
+    </div>
+    <script src="{{ url_for('static', filename='jquery.js') }}"></script>
+    <script>
+      var $form = $("form");
+
+      function getFormData($form) {
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function (n, i) {
+          indexed_array[n["name"]] = n["value"];
+        });
+        return indexed_array;
+      }
+      $("form").submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+          url: "/predict",
+          type: "POST",
+          dataType: "json",
+          data: JSON.stringify(getFormData($form)),
+          contentType: "application/json;charset=UTF-8",
+        }).done(function (data) {
+          $("#result-value").text(data.prediction);
+        });
+      });
+    </script>
+  </body>
+</html>
